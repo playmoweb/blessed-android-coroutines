@@ -533,8 +533,8 @@ class BluetoothCentralManager(private val context: Context) {
      */
     suspend fun cancelConnection(peripheral: BluetoothPeripheral): Unit =
         suspendCoroutine {
+            var resumed = false
             cancelConnection(peripheral, object : BluetoothCentralManagerCallback() {
-                var resumed = false
                 override fun onDisconnectedPeripheral(peripheral: BluetoothPeripheral, status: HciStatus) {
                     if (!resumed) {
                         it.resume(Unit)

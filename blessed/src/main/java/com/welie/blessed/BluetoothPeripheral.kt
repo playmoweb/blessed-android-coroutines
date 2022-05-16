@@ -557,7 +557,15 @@ class BluetoothPeripheral internal constructor(
             // Since we will not get a callback on onConnectionStateChange for this, we issue the disconnect ourselves
             scope.launch {
                 delay(50)
-                bluetoothGattCallback.onConnectionStateChange(bluetoothGatt, HciStatus.SUCCESS.value, BluetoothProfile.STATE_DISCONNECTED)
+                if (bluetoothGatt != null) {
+                    bluetoothGattCallback.onConnectionStateChange(
+                        bluetoothGatt,
+                        HciStatus.SUCCESS.value,
+                        BluetoothProfile.STATE_DISCONNECTED
+                    )
+                } else {
+                    Logger.w(TAG, "cannot issue disconnect because gatt is null")
+                }
             }
         } else {
             // Cancel active connection and onConnectionStateChange will be called by Android
