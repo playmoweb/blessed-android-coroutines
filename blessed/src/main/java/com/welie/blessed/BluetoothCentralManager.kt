@@ -537,8 +537,12 @@ class BluetoothCentralManager(private val context: Context) {
             cancelConnection(peripheral, object : BluetoothCentralManagerCallback() {
                 override fun onDisconnectedPeripheral(peripheral: BluetoothPeripheral, status: HciStatus) {
                     if (!resumed) {
-                        it.resume(Unit)
-                        resumed = true
+                        try {
+                            resumed = true
+                            it.resume(Unit)
+                        } catch (e: Exception) {
+                            Logger.e(TAG, "exception in onDisconnectedPeripheral", e)
+                        }
                     }
                 }
             })
