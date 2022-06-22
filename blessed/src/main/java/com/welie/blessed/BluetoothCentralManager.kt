@@ -215,6 +215,10 @@ class BluetoothCentralManager(private val context: Context) {
         override fun getPincode(peripheral: BluetoothPeripheral): String? {
             return pinCodes[peripheral.address]
         }
+
+        override fun connectionUpdated(peripheral: BluetoothPeripheral, interval: Int, latency: Int, timeout: Int, status: Int) {
+            scope.launch { connectionUpdatedCallback.invoke(peripheral, interval, latency, timeout, status) }
+        }
     }
 
     /**
@@ -435,6 +439,11 @@ class BluetoothCentralManager(private val context: Context) {
         connectionStateCallback = connectionCallback
     }
 
+    private var connectionUpdatedCallback : (peripheral: BluetoothPeripheral, interval: Int, latency: Int, timeout: Int, status: Int) -> Unit = {_,_,_,_,_ -> }
+
+    fun observeConnectionUpdate(connectionUpdateCallback: (peripheral: BluetoothPeripheral, interval: Int, latency: Int, timeout: Int, status: Int) -> Unit) {
+        connectionUpdatedCallback = connectionUpdateCallback
+    }
 
     /**
      * Connect to a known peripheral immediately. The peripheral must have been found by scanning for this call to succeed. This method will time out in max 30 seconds on most phones and in 5 seconds on Samsung phones.

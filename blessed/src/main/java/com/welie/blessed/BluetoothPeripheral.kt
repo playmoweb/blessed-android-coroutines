@@ -270,6 +270,7 @@ class BluetoothPeripheral internal constructor(
             if (gattStatus == GattStatus.SUCCESS) {
                 val msg = String.format(Locale.ENGLISH, "connection parameters: interval=%.1fms latency=%d timeout=%ds", interval * 1.25f, latency, timeout / 100)
                 Logger.d(TAG, msg)
+                listener.connectionUpdated(this@BluetoothPeripheral, interval, latency, timeout, status)
             } else {
                 Logger.e(TAG, "connection parameters update failed with status '%s'", gattStatus)
             }
@@ -1529,6 +1530,7 @@ class BluetoothPeripheral internal constructor(
          */
         fun disconnected(peripheral: BluetoothPeripheral, status: HciStatus)
         fun getPincode(peripheral: BluetoothPeripheral): String?
+        fun connectionUpdated(peripheral: BluetoothPeripheral, interval: Int, latency: Int, timeout: Int, status: Int)
     }
 
     private var timeoutJob : Job? = null

@@ -309,6 +309,11 @@ internal class BluetoothHandler private constructor(context: Context) {
             }
         }
 
+        central.observeConnectionUpdate { peripheral, interval, latency, timeout, status ->
+            val msg = String.format(Locale.ENGLISH, "connection parameters: interval=%.1fms latency=%d timeout=%ds", interval * 1.25f, latency, timeout / 100)
+            Timber.i(msg)
+        }
+
         central.observeAdapterState { state ->
             when (state) {
                 BluetoothAdapter.STATE_ON -> startScanning()
