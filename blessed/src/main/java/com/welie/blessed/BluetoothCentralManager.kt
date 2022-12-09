@@ -166,7 +166,7 @@ class BluetoothCentralManager(private val context: Context) {
                 currentCentralManagerCallback.onConnectedPeripheral(peripheral)
                 currentCentralManagerCallback = BluetoothCentralManagerCallback.NULL()
             }
-            scope.launch { connectionStateCallback.invoke(peripheral, ConnectionState.CONNECTED)}
+            scope.launch { connectionStateCallback.invoke(peripheral, ConnectionState.CONNECTED, HciStatus.SUCCESS)}
         }
 
         override fun connectFailed(peripheral: BluetoothPeripheral, status: HciStatus) {
@@ -192,7 +192,7 @@ class BluetoothCentralManager(private val context: Context) {
                     currentCentralManagerCallback.onConnectionFailed(peripheral, status)
                     currentCentralManagerCallback = BluetoothCentralManagerCallback.NULL()
                 }
-                scope.launch { connectionStateCallback.invoke(peripheral, ConnectionState.DISCONNECTED)}
+                scope.launch { connectionStateCallback.invoke(peripheral, ConnectionState.DISCONNECTED, status)}
             }
         }
 
@@ -209,7 +209,7 @@ class BluetoothCentralManager(private val context: Context) {
                 currentCentralManagerCallback.onDisconnectedPeripheral(peripheral, status)
                 currentCentralManagerCallback = BluetoothCentralManagerCallback.NULL()
             }
-            scope.launch { connectionStateCallback.invoke(peripheral, ConnectionState.DISCONNECTED) }
+            scope.launch { connectionStateCallback.invoke(peripheral, ConnectionState.DISCONNECTED, status) }
         }
 
         override fun getPincode(peripheral: BluetoothPeripheral): String? {
@@ -433,9 +433,9 @@ class BluetoothCentralManager(private val context: Context) {
         get() = bluetoothScanner != null && currentCallback != null
 
 
-    private var connectionStateCallback : (peripheral : BluetoothPeripheral, state : ConnectionState) -> Unit = {_,_ -> }
+    private var connectionStateCallback : (peripheral : BluetoothPeripheral, state : ConnectionState, status: HciStatus) -> Unit = {_,_,_ -> }
 
-    fun observeConnectionState(connectionCallback: (peripheral : BluetoothPeripheral, state : ConnectionState) -> Unit) {
+    fun observeConnectionState(connectionCallback: (peripheral : BluetoothPeripheral, state : ConnectionState, status: HciStatus) -> Unit) {
         connectionStateCallback = connectionCallback
     }
 
